@@ -3,7 +3,7 @@ version: '3.9'
 services:
   # Ruby on Rails 5.x
   app:
-    container_name: cs-rails5-app
+    container_name: rails5-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -28,7 +28,7 @@ services:
 
   # database server: mariadb
   db:
-    container_name: cs-rails5-db
+    container_name: rails5-db
     image: mariadb:$MARIADB_TAG
     env_file:
       - .env
@@ -43,7 +43,7 @@ services:
 
   # web server: nginx
   web:
-    container_name: cs-rails5-web
+    container_name: rails5-web
     build:
       context: containers/nginx
       dockerfile: Dockerfile
