@@ -1,4 +1,49 @@
-    container_name: rails5-web
+version: '3.9'
+
+services:
+  # Ruby on Rails 5.x
+  app:
+    container_name: cs-rails5-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - RUBY_TAG=$RUBY_TAG
+    env_file:
+      - .env
+    command: bundle exec puma -C config/puma.rb
+    volumes:
+      - .:/webapp
+      - public-data:/webapp/public
+      - tmp-data:/webapp/tmp
+      - log-data:/webapp/log
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+    depends_on:
+      - db
+    networks:
+      - proxy_default
+
+  # database server: mariadb
+  db:
+    container_name: cs-rails5-db
+    image: mariadb:$MARIADB_TAG
+    env_file:
+      - .env
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+    networks:
+      - proxy_default
+
+  # web server: nginx
+  web:
+    container_name: cs-rails5-web
     build:
       context: containers/nginx
       dockerfile: Dockerfile
